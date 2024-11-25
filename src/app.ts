@@ -1,4 +1,4 @@
-import express, { Application, NextFunction, request, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import productRouter from './modules/products/product.router';
 import orderRouter from './modules/orders/order.route';
@@ -9,23 +9,22 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api/products', productRouter);
-app.use('/api/orders',orderRouter)
+app.use('/api/orders', orderRouter);
 app.get('/', (req: Request, res: Response) => {
   res.send('hello book-shop');
 });
 
-app.all('*',(req:Request, res:Response)=>{
+app.all('*', (req: Request, res: Response) => {
   res.status(400).json({
-    success:false,
-    message: "Not Found"
-  })
-})
-
+    success: false,
+    message: 'Not Found',
+  });
+});
 
 // error handler
 
-app.use((error: any,req: Request, res: Response, next: NextFunction) => {
-  if(error){
+app.use((error: any, req: Request, res: Response, next: NextFunction) => {
+  if (error) {
     res.status(500).json({
       message: error.message,
       success: false,
@@ -33,7 +32,6 @@ app.use((error: any,req: Request, res: Response, next: NextFunction) => {
       stack: error.stack,
     });
   }
-  
-})
+});
 
 export default app;
