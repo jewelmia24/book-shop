@@ -1,7 +1,7 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { productService } from './product.service';
 // create product
-const createProduct = async (req: Request, res: Response) => {
+const createProduct = async (req: Request, res: Response, next:NextFunction) => {
   try {
     const payload = req.body;
 
@@ -12,16 +12,13 @@ const createProduct = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.json({
-      message: 'Validation failed',
-      success: false,
-      error,
-    });
+    
+    next(error)
   }
 };
 // get all products and search
 
-const getAllProduct = async (req: Request, res: Response) => {
+const getAllProduct = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const searchTerm = req.query.searchTerm;
     const query = searchTerm
@@ -35,28 +32,33 @@ const getAllProduct = async (req: Request, res: Response) => {
       : {};
 
     const result = await productService.getAllProduct(query);
-
-    res.json({
-      message: 'Book retrieved successfully',
-      success: true,
-      data: result,
-    });
+    if(!result || result.length===0){
+      throw new Error('Book Not Found')
+      
+    }else{
+      
+      res.json({
+        message: 'Book retrieved successfully',
+        success: true,
+        data: result,
+      });
+    }
+   
+    
+   
   } catch (error) {
-    res.json({
-      message: 'Error retrieving book',
-      success: false,
-      error,
-    });
+   next(error)
   }
 };
 
 // get single product
 
-const getSingleProduct = async (req: Request, res: Response) => {
+const getSingleProduct = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const userId = req.params.userId;
     const result = await productService.getSingleProduct(userId);
-
+    console.log(result);
+    if(!result){throw new Error('Book Not Found')}
     res
       .status(200)
       .json({
@@ -65,17 +67,13 @@ const getSingleProduct = async (req: Request, res: Response) => {
         data: result,
       });
   } catch (error) {
-    res.json({
-      message: 'Error retrieving book',
-      success: false,
-      error,
-    });
+    next(error)
   }
 };
 
 // update product
 
-const updateProduct = async (req: Request, res: Response) => {
+const updateProduct = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const userId = req.params.userId;
     const payload = req.body;
@@ -86,17 +84,13 @@ const updateProduct = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error) {
-    res.json({
-      message: 'Error updating book',
-      success: false,
-      error,
-    });
+    next(error)
   }
 };
 
 // delete product
 
-const deleteProduct = async (req: Request, res: Response) => {
+const deleteProduct = async (req: Request, res: Response,next:NextFunction) => {
   try {
     const userId = req.params.userId;
     await productService.deleteProduct(userId);
@@ -106,11 +100,7 @@ const deleteProduct = async (req: Request, res: Response) => {
       data: {},
     });
   } catch (error) {
-    res.json({
-      message: 'Error book deleting',
-      success: false,
-      error,
-    });
+   next(error)
   }
 };
 
