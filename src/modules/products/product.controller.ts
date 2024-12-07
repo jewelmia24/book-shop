@@ -10,12 +10,27 @@ const createProduct = async (
     const payload = req.body;
 
     const result = await productService.createProduct(payload);
-    res.json({
-      message: 'Book created successfully',
-      success: true,
-      data: result,
-    });
-  } catch (error) {
+    
+   
+      res.status(200).json({
+        message: 'Book created successfully',
+        success: true,
+        data: result,
+      });
+    
+    
+
+   
+  } catch (error:any) {
+    console.log(error);
+    if(error.name === "ValidationError"){
+      res.status(500).json({
+        message: "Validation faield",
+        success: false,
+        error: error,
+        stack: error.stack,
+      });
+    }
     next(error);
   }
 };
@@ -42,7 +57,7 @@ const getAllProduct = async (
     if (!result || result.length === 0) {
       throw new Error('Book Not Found');
     } else {
-      res.json({
+      res.status(200).json({
         message: 'Book retrieved successfully',
         success: true,
         data: result,

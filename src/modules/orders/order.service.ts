@@ -8,7 +8,7 @@ const createOrder = async (payload: IOrder): Promise<IOrder> => {
 
 //create revinue
 
-export const calculateRevenue = async (): Promise<number> => {
+const calculateRevenue = async (): Promise<number> => {
   const result = await Order.aggregate([
     { $group: { _id: null, totalRevenue: { $sum: '$totalPrice' } } },
   ]);

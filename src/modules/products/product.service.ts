@@ -9,7 +9,7 @@ const createProduct = async (payload: IProduct): Promise<IProduct> => {
 };
 // get all products and search
 
-const getAllProduct = async (query: FilterQuery<IProduct>) => {
+const getAllProduct = async (query:FilterQuery<IProduct>) => {
   const result = await Product.find(query);
   return result;
 };
